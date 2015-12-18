@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.email       = "boris@roundlake.ru"
   s.homepage    = "http://github.com/inossidabile/wash_out/"
   s.description = "Dead simple Rails 3 SOAP server library"
-  s.authors     = ['Boris Staal', 'Peter Zotov']
+  s.authors     = ['Boris Staal', 'Peter Zotov', 'Hisham Malik']
 
   s.files         = `git ls-files`.split("\n")
   s.require_paths = ["lib"]
