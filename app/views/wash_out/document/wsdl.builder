@@ -1,6 +1,5 @@
 xml.instruct!
 xml.wsdl :definitions, 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
-                'xmlns:tns' => @namespace,
                 'xmlns:soap' => 'http://schemas.xmlsoap.org/wsdl/soap/',
                 'xmlns:xsd' => 'http://www.w3.org/2001/XMLSchema',
                 'xmlns:soap-enc' => 'http://schemas.xmlsoap.org/soap/encoding/',

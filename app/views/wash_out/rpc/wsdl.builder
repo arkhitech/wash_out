@@ -1,5 +1,5 @@
 xml.instruct!
-xml.definitions 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
+xml.wsdl :definitions, 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
                 'xmlns:tns' => @namespace,
                 'xmlns:soap' => 'http://schemas.xmlsoap.org/wsdl/soap/',
                 'xmlns:xsd' => 'http://www.w3.org/2001/XMLSchema',
@@ -8,7 +8,7 @@ xml.definitions 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
                 'xmlns:wsdl' => 'http://schemas.xmlsoap.org/wsdl/',
                 'name' => @name,
                 'targetNamespace' => @namespace do
-  xml.types do
+  xml.wsdl :types do
     xml.tag! "schema", :targetNamespace => @namespace, :xmlns => 'http://www.w3.org/2001/XMLSchema' do
       defined = []
       @map.each do |operation, formats|
@@ -19,26 +19,26 @@ xml.definitions 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
     end
   end
 
-  xml.portType :name => "#{@name}_port" do
+  xml.wsdl :portType, :name => "#{@name}_port" do
     @map.each do |operation, formats|
-      xml.operation :name => operation do
-        xml.input :message => "tns:#{operation}"
-        xml.output :message => "tns:#{formats[:response_tag]}"
+      xml.wsdl :operation, :name => operation do
+        xml.wsdl :input, :message => "tns:#{operation}"
+        xml.wsdl :output, :message => "tns:#{formats[:response_tag]}"
       end
     end
   end
 
-  xml.binding :name => "#{@name}_binding", :type => "tns:#{@name}_port" do
+  xml.wsdl :binding, :name => "#{@name}_binding", :type => "tns:#{@name}_port" do
     xml.tag! "soap:binding", :style => 'rpc', :transport => 'http://schemas.xmlsoap.org/soap/http'
     @map.keys.each do |operation|
-      xml.operation :name => operation do
+      xml.wsdl :operation, :name => operation do
         xml.tag! "soap:operation", :soapAction => operation
-        xml.input do
+        xml.wsdl :input do
           xml.tag! "soap:body",
             :use => "encoded", :encodingStyle => 'http://schemas.xmlsoap.org/soap/encoding/',
             :namespace => @namespace
         end
-        xml.output do
+        xml.wsdl :output do
           xml.tag! "soap:body",
             :use => "encoded", :encodingStyle => 'http://schemas.xmlsoap.org/soap/encoding/',
             :namespace => @namespace
@@ -47,19 +47,19 @@ xml.definitions 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
     end
   end
 
-  xml.service :name => "service" do
-    xml.port :name => "#{@name}_port", :binding => "tns:#{@name}_binding" do
+  xml.wsdl :service, :name => "service" do
+    xml.wsdl :port, :name => "#{@name}_port", :binding => "tns:#{@name}_binding" do
       xml.tag! "soap:address", :location => send("#{@name}_action_url")
     end
   end
 
   @map.each do |operation, formats|
-    xml.message :name => "#{operation}" do
+    xml.wsdl :message, :name => "#{operation}" do
       formats[:in].each do |p|
         xml.part wsdl_occurence(p, true, :name => p.name, :type => p.namespaced_type)
       end
     end
-    xml.message :name => formats[:response_tag] do
+    xml.wsdl :message, :name => formats[:response_tag] do
       formats[:out].each do |p|
         xml.part wsdl_occurence(p, true, :name => p.name, :type => p.namespaced_type)
       end
