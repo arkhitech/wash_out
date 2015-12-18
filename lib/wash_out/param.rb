@@ -21,7 +21,7 @@ module WashOut
 
       if soap_config.camelize_wsdl.to_s == 'lower'
         @name = @name.camelize(:lower)
-      elsif soap_config.camelize_wsdl
+      elsif name.is_a?(Symbol) && soap_config.camelize_wsdl
         @name = @name.camelize
       end
 

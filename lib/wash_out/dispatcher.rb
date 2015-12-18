@@ -73,8 +73,9 @@ module WashOut
       @map       = self.class.soap_actions
       @namespace = soap_config.namespace
       @name      = controller_path.gsub('/', '_')
+      @name_display    = soap_config.name || controller_path.gsub('/', '_')
 
-      render :template => "wash_out/#{soap_config.wsdl_style}/wsdl", :layout => false,
+      render :template => "wash_with_soap/#{soap_config.wsdl_style}/wsdl", :layout => false,
              :content_type => 'text/xml'
     end
 

@@ -1,15 +1,15 @@
 xml.instruct!
-xml.definitions 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
+xml.wsdl :definitions, 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
                 'xmlns:tns' => @namespace,
                 'xmlns:soap' => 'http://schemas.xmlsoap.org/wsdl/soap/',
                 'xmlns:xsd' => 'http://www.w3.org/2001/XMLSchema',
                 'xmlns:soap-enc' => 'http://schemas.xmlsoap.org/soap/encoding/',
                 'xmlns:wsdl' => 'http://schemas.xmlsoap.org/wsdl/',
-                'name' => @name,
-                'targetNamespace' => @namespace do
+                'name' => @service_name,
+                'xmlns:tns' => @namespace do
 
-  xml.types do
-    xml.tag! "schema", :targetNamespace => @namespace, :xmlns => 'http://www.w3.org/2001/XMLSchema' do
+  xml.wsdl :types do
+    xml.tag! "xs:schema", :targetNamespace => @namespace, 'xmlns:tns' => @namespace, 'xmlns:xs' => 'http://www.w3.org/2001/XMLSchema' do
       defined = []
       @map.each do |operation, formats|
         (formats[:in] + formats[:out]).each do |p|
@@ -19,7 +19,7 @@ xml.definitions 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
     end
   end
 
-  xml.portType :name => "#{@name}_port" do
+  xml.wsdl :portType, :name => "#{@service_name}_port" do
     @map.each do |operation, formats|
       xml.operation :name => operation do
         xml.input :message => "tns:#{operation}"
@@ -28,17 +28,17 @@ xml.definitions 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
     end
   end
 
-  xml.binding :name => "#{@name}_binding", :type => "tns:#{@name}_port" do
+  xml.wsdl :binding, :name => "#{@service_name}_binding", :type => "tns:#{@service_name}_port" do
     xml.tag! "soap:binding", :style => 'document', :transport => 'http://schemas.xmlsoap.org/soap/http'
     @map.keys.each do |operation|
-      xml.operation :name => operation do
+      xml.wsdl :operation, :name => operation do
         xml.tag! "soap:operation", :soapAction => operation
-        xml.input do
+        xml.wsdl :input do
           xml.tag! "soap:body",
             :use => "literal",
             :namespace => @namespace
         end
-        xml.output do
+        xml.wsdl :output do
           xml.tag! "soap:body",
             :use => "literal",
             :namespace => @namespace
@@ -47,21 +47,21 @@ xml.definitions 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
     end
   end
 
-  xml.service :name => "service" do
-    xml.port :name => "#{@name}_port", :binding => "tns:#{@name}_binding" do
+  xml.wsdl :service, :name => @service_name do
+    xml.wsdl :port, :name => "#{@service_name}_port", :binding => "tns:#{@service_name}_binding" do
       xml.tag! "soap:address", :location => send("#{@name}_action_url")
     end
   end
 
   @map.each do |operation, formats|
-    xml.message :name => "#{operation}" do
+    xml.wsdl :message, :name => "#{operation}" do
       formats[:in].each do |p|
-        xml.part wsdl_occurence(p, false, :name => p.name, :type => p.namespaced_type)
+        xml.wsdl :part, wsdl_occurence(p, false, :name => p.name, :type => p.namespaced_type)
       end
     end
-    xml.message :name => formats[:response_tag] do
+    xml.wsdl :message, :name => formats[:response_tag] do
       formats[:out].each do |p|
-        xml.part wsdl_occurence(p, false, :name => p.name, :type => p.namespaced_type)
+        xml.wsdl :part, wsdl_occurence(p, false, :name => p.name, :type => p.namespaced_type)
       end
     end
   end
