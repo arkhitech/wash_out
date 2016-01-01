@@ -8,7 +8,7 @@ xml.wsdl :definitions, 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
                 'xmlns:tns' => @namespace do
 
   xml.wsdl :types do
-    xml.tag! "xs:schema", :targetNamespace => @namespace, 'xmlns:tns' => @namespace, 'xmlns:xs' => 'http://www.w3.org/2001/XMLSchema' do
+    xml.tag! "xsd:schema", :targetNamespace => @namespace, 'xmlns:tns' => @namespace, 'xmlns:xs' => 'http://www.w3.org/2001/XMLSchema' do
       defined = []
       @map.each do |operation, formats|
         (formats[:in] + formats[:out]).each do |p|

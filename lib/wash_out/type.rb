@@ -20,7 +20,7 @@ module WashOut
 
       if soap_config.camelize_wsdl.to_s == 'lower'
         @param_type_name = @param_type_name.camelize(:lower)
-      elsif soap_config.camelize_wsdl
+      elsif @param_type_name.is_a?(Symbol) && soap_config.camelize_wsdl
         @param_type_name = @param_type_name.camelize
       end
       @param_type_name

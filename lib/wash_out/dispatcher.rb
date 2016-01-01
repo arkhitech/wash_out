@@ -73,9 +73,9 @@ module WashOut
       @map       = self.class.soap_actions
       @namespace = soap_config.namespace
       @name      = controller_path.gsub('/', '_')
-      @name_display    = soap_config.name || controller_path.gsub('/', '_')
+      @service_name    = soap_config.name || controller_path.gsub('/', '_')
 
-      render :template => "wash_with_soap/#{soap_config.wsdl_style}/wsdl", :layout => false,
+      render :template => "wash_out/#{soap_config.wsdl_style}/wsdl", :layout => false,
              :content_type => 'text/xml'
     end
 
@@ -84,7 +84,7 @@ module WashOut
       @namespace   = soap_config.namespace
       @operation   = soap_action = request.env['wash_out.soap_action']
       @action_spec = self.class.soap_actions[soap_action]
-
+      @wrap_parameters = env['HTTP_SOAPACTION'].blank?
       result = { 'value' => result } unless result.is_a? Hash
       result = HashWithIndifferentAccess.new(result)
 
@@ -205,7 +205,7 @@ module WashOut
     def xml_data
       xml_data = env['wash_out.soap_data'].values_at(:envelope, :Envelope).compact.first
       xml_data = xml_data.values_at(:body, :Body).compact.first
-      xml_data = xml_data.values_at(soap_action.underscore.to_sym, soap_action.to_sym, request_input_tag.to_sym).compact.first || {}
+      xml_data = xml_data.values_at(soap_action.underscore.to_sym, soap_action.to_sym, request_input_tag.to_sym).compact.first || xml_data
     end
 
   end

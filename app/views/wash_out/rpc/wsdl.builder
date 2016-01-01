@@ -6,7 +6,7 @@ xml.wsdl :definitions, 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
                 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
                 'xmlns:soap-enc' => 'http://schemas.xmlsoap.org/soap/encoding/',
                 'xmlns:wsdl' => 'http://schemas.xmlsoap.org/wsdl/',
-                'name' => @name,
+                'name' => @service_name,
                 'targetNamespace' => @namespace do
   xml.wsdl :types do
     xml.tag! "schema", :targetNamespace => @namespace, :xmlns => 'http://www.w3.org/2001/XMLSchema' do
@@ -19,16 +19,16 @@ xml.wsdl :definitions, 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
     end
   end
 
-  xml.wsdl :portType, :name => "#{@name}_port" do
+  xml.wsdl :portType, :name => "#{@service_name}_port" do
     @map.each do |operation, formats|
       xml.wsdl :operation, :name => operation do
-        xml.wsdl :input, :message => "tns:#{operation}"
-        xml.wsdl :output, :message => "tns:#{formats[:response_tag]}"
+        xml.wsdl :input, :message => "tns:#{operation}", name: operation
+        xml.wsdl :output, :message => "tns:#{formats[:response_tag]}", name: operation
       end
     end
   end
 
-  xml.wsdl :binding, :name => "#{@name}_binding", :type => "tns:#{@name}_port" do
+  xml.wsdl :binding, :name => "#{@service_name}_binding", :type => "tns:#{@service_name}_port" do
     xml.tag! "soap:binding", :style => 'rpc', :transport => 'http://schemas.xmlsoap.org/soap/http'
     @map.keys.each do |operation|
       xml.wsdl :operation, :name => operation do
@@ -48,8 +48,8 @@ xml.wsdl :definitions, 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
   end
 
   xml.wsdl :service, :name => "service" do
-    xml.wsdl :port, :name => "#{@name}_port", :binding => "tns:#{@name}_binding" do
-      xml.tag! "soap:address", :location => send("#{@name}_action_url")
+    xml.wsdl :port, :name => "#{@service_name}_port", :binding => "tns:#{@service_name}_binding" do
+      xml.tag! "soap:address", :location => send("#{@service_name}_action_url")
     end
   end
 
