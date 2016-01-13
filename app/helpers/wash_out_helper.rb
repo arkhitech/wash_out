@@ -38,8 +38,10 @@ module WashOutHelper
             xml.tag! tag_name, param_options.merge(attrs), &blk
           end
         else
-          xml.tag! tag_name, param_options do
-            wsdl_data(xml, param.map)
+          if !param.map.empty?
+            xml.tag! tag_name, param_options do
+              wsdl_data(xml, param.map)
+            end
           end
         end
       else
@@ -49,7 +51,13 @@ module WashOutHelper
             xml.tag! tag_name, v, param_options
           end
         else
-          xml.tag! tag_name, param.value, param_options
+          if param.value.is_a?(Hash)
+            xml.tag! tag_name, param_options do
+              xml.cdata! param.value.to_xml(:root => :RESPONSE, :skip_instruct => true)
+            end
+          else
+            xml.tag! tag_name, param.value, param_options
+          end
         end
       end
     end

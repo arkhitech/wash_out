@@ -84,7 +84,7 @@ module WashOut
       @namespace   = soap_config.namespace
       @operation   = soap_action = request.env['wash_out.soap_action']
       @action_spec = self.class.soap_actions[soap_action]
-      @wrap_parameters = env['HTTP_SOAPACTION'].blank?
+      #@wrap_parameters = env['HTTP_SOAPACTION'].blank?
       result = { 'value' => result } unless result.is_a? Hash
       result = HashWithIndifferentAccess.new(result)
 
